@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://apexgrowthsystem.com/sitemap.xml
+Sitemap: https://apexgrowthsystem.net/sitemap.xml
