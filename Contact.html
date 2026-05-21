@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — APEX</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="subpage.css">
+</head>
+<body><style>
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+@media(max-width:900px){.contact-grid{grid-template-columns:1fr;gap:36px}}
+.contact-card{background:var(--paper);border:1px solid var(--ink);padding:32px 36px;box-shadow:6px 6px 0 var(--ink);position:relative}
+.contact-card::before{content:attr(data-tag);position:absolute;top:-12px;left:20px;background:var(--hot);color:var(--paper);padding:4px 10px;font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.14em}
+.contact-card h3{font-family:var(--display);font-size:28px;letter-spacing:-.015em;line-height:1.1;margin-bottom:14px}
+.contact-card h3 .serif{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--hot);font-size:1.08em}
+.contact-card p{color:var(--mid);font-size:15px;font-weight:500;margin-bottom:18px;line-height:1.55}
+.contact-card .email{font-family:var(--mono);font-size:14px;font-weight:700;letter-spacing:.04em;color:var(--ink);background:var(--bg);padding:10px 14px;border:1px solid var(--ink);display:inline-block;transition:transform .15s,box-shadow .15s}
+.contact-card .email:hover{transform:translate(-2px,-2px);box-shadow:3px 3px 0 var(--hot)}
+.contact-card .sla{display:block;margin-top:12px;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--green);text-transform:uppercase}
+.form-card{background:var(--paper);border:1px solid var(--ink);box-shadow:8px 8px 0 var(--ink);padding:36px 40px}
+.form-card h2{font-family:var(--display);font-size:34px;letter-spacing:-.02em;line-height:1.1;margin-bottom:8px}
+.form-card h2 .serif{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--hot);font-size:1.08em}
+.form-card .form-lede{color:var(--mid);font-size:15px;font-weight:500;margin-bottom:24px}
+.f-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:640px){.f-grid{grid-template-columns:1fr}}
+.f{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.f label{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--mid);text-transform:uppercase}
+.f input,.f select,.f textarea{padding:13px 15px;background:var(--bg);border:1px solid var(--ink);font-family:var(--mono);font-size:14.5px;color:var(--ink);font-weight:500;outline:none;font-family:'Archivo',sans-serif;transition:background .15s,box-shadow .15s,transform .15s}
+.f textarea{font-family:'Archivo',sans-serif;resize:vertical;min-height:140px;line-height:1.5}
+.f input:focus,.f select:focus,.f textarea:focus{background:var(--paper);box-shadow:4px 4px 0 var(--hot);transform:translate(-2px,-2px)}
+.f-submit{margin-top:8px;padding:16px 24px;background:var(--ink);color:var(--paper);font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--ink);box-shadow:4px 4px 0 var(--hot);cursor:pointer;transition:transform .15s,background .15s;display:inline-flex;align-items:center;gap:12px}
+.f-submit:hover{background:var(--hot);transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.f-submit .arr{width:22px;height:22px;background:var(--hot);color:var(--ink);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;transition:background .15s,color .15s}
+.f-submit:hover .arr{background:var(--paper);color:var(--hot)}
+.form-thanks{display:none;padding:24px;background:var(--green-dim);border:1px solid var(--green);color:var(--green);font-family:var(--display);font-size:18px;letter-spacing:-.01em;line-height:1.2;margin-top:14px}
+.form-thanks.on{display:block;animation:in .4s ease both}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+@media(max-width:640px){
+  .contact-grid{gap:28px}
+  .contact-card{padding:24px 22px}
+  .contact-card::before{font-size:9px;padding:3px 8px;left:16px;top:-10px}
+  .contact-card h3{font-size:22px;margin-bottom:10px}
+  .contact-card p{font-size:14px;margin-bottom:14px}
+  .contact-card .email{font-size:12.5px;padding:9px 12px;word-break:break-all}
+  .contact-card .sla{font-size:10px;letter-spacing:.1em}
+
+  .form-card{padding:24px 22px;box-shadow:5px 5px 0 var(--ink)}
+  .form-card h2{font-size:24px;margin-bottom:6px}
+  .form-card .form-lede{font-size:14px;margin-bottom:18px}
+  .f-grid{grid-template-columns:1fr;gap:0}
+  .f label{font-size:10px;letter-spacing:.1em}
+  .f input,.f select,.f textarea{padding:12px 14px;font-size:14px}
+  .f-submit{padding:14px 18px;font-size:11.5px;letter-spacing:.1em;width:100%;justify-content:center}
+  .f-submit .arr{width:20px;height:20px;font-size:10px}
+  .form-thanks{padding:18px;font-size:16px}
+}
+</style>
+<nav class="nav">
+  <div class="nav-i">
+    <a class="brand" href="index.html"><span class="sq"></span>APEX</a>
+    <div class="nav-ul">
+      <a href="Protocol.html" >Protocol</a>
+      <a href="Science.html" >Science</a>
+      <a href="Research.html" >Research</a>
+      <a href="Press.html" >Press</a>
+      <a href="Contact.html" class="cur">Contact</a>
+    </div>
+    <a class="nav-cta" href="Height Assessment.html">Run assessment <span class="arr">↗</span></a>
+  </div>
+</nav>
+<section class="page-head">
+  <div class="wrap">
+    <div class="page-meta">
+      <div class="crumbs"><a href="index.html">Home</a><span class="stamp">Contact</span></div>
+      <div class="ver">Real humans · 72-hour SLA</div>
+      <div>DOC · CONTACT-2026</div>
+    </div>
+    <div class="page-grid">
+      <div class="page-kick"><span class="idx">VI.</span>Contact</div>
+      <div>
+        <h1 class="page-h1">Talk to a <span class="serif">human.</span></h1>
+        <p class="page-lede">We answer everything. Subject questions, research data, press kits, refunds, refusals. <strong>72-hour SLA on every channel.</strong> Most inboxes hit faster.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec paper">
+  <div class="wrap">
+    <div class="contact-grid">
+      <div>
+        <div class="contact-card" data-tag="SUPPORT">
+          <h3>Subjects &amp; <span class="serif">support</span></h3>
+          <p>Existing subject? Protocol question? Account issue? Refund? This is the channel.</p>
+          <a class="email" href="mailto:apexgrowthprotocol@gmail.com">apexgrowthprotocol@gmail.com</a>
+          <span class="sla">● Live · 24-hour response</span>
+        </div>
+        <div class="contact-card" data-tag="RESEARCH" style="margin-top:36px">
+          <h3><span class="serif">Researchers</span> &amp; data</h3>
+          <p>Want the anonymized dataset, the model card, or a methodology call? Send affiliation + intent.</p>
+          <a class="email" href="mailto:apexgrowthprotocol@gmail.com?subject=Research%20%E2%80%94%20Dataset%20Request">apexgrowthprotocol@gmail.com</a>
+          <span class="sla">● Subject: “Research — Dataset Request”</span>
+        </div>
+        <div class="contact-card" data-tag="PRESS" style="margin-top:36px">
+          <h3><span class="serif">Press</span> &amp; partnerships</h3>
+          <p>Press kit, interview, founder calls, integration partners. Use this inbox.</p>
+          <a class="email" href="mailto:apexgrowthprotocol@gmail.com?subject=Press%20Kit">apexgrowthprotocol@gmail.com</a>
+          <span class="sla">● Subject: “Press Kit”</span>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <h2>Send a <span class="serif">message.</span></h2>
+        <p class="form-lede">Goes straight to the right inbox. We read every line.</p>
+        <form id="contactForm">
+          <div class="f-grid">
+            <div class="f"><label>Name</label><input required name="name" placeholder="Marcus K."></div>
+            <div class="f"><label>Email</label><input required type="email" name="email" placeholder="you@domain.com"></div>
+          </div>
+          <div class="f-grid">
+            <div class="f"><label>Topic</label>
+              <select required name="subject">
+                <option value="">Select...</option>
+                <option>Subject support</option>
+                <option>Research / dataset</option>
+                <option>Press / partnership</option>
+                <option>Refund request</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="f"><label>Subject ID (if any)</label><input name="subj" placeholder="SUBJ-217"></div>
+          </div>
+          <div class="f"><label>Message</label><textarea required name="message" placeholder="Tell us what's going on..."></textarea></div>
+          <button class="f-submit" type="submit" id="cfSubmit">Send message <span class="arr">→</span></button>
+          <div class="form-thanks" id="thanks">✓ Message received. We'll reply within 72 hours.</div>
+          <div class="form-thanks" id="thanksErr" style="background:#fde9e1;border-color:var(--hot);color:var(--hot);display:none">✕ Could not send. Email us directly: <a href="mailto:apexgrowthprotocol@gmail.com" style="color:var(--hot);text-decoration:underline">apexgrowthprotocol@gmail.com</a></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+const form = document.getElementById('contactForm');
+const btn = document.getElementById('cfSubmit');
+const ok = document.getElementById('thanks');
+const err = document.getElementById('thanksErr');
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  btn.disabled = true;
+  btn.style.opacity = '.6';
+  btn.querySelector('span.arr')?.replaceWith(Object.assign(document.createElement('span'),{className:'arr',textContent:'…'}));
+  err.classList.remove('on'); err.style.display='none';
+  const fd = new FormData(form);
+  const payload = {
+    access_key: 'ab28a828-af15-42fd-9edb-4637527d90d1',
+    from_name: 'APEX Contact Form',
+    name: fd.get('name'),
+    email: fd.get('email'),
+    subject: 'APEX Contact: ' + (fd.get('subject') || 'General'),
+    subj_id: fd.get('subj') || '',
+    message: fd.get('message')
+  };
+  try {
+    const r = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const d = await r.json().catch(()=>({}));
+    if (r.ok && d.success) {
+      ok.classList.add('on');
+      form.reset();
+    } else {
+      throw new Error(d.message || 'Server error');
+    }
+  } catch (ex) {
+    err.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.style.opacity = '';
+  }
+});
+</script>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-i">
+      <div class="brand"><span class="sq"></span>APEX</div>
+      <div class="footer-links">
+        <a href="Protocol.html">Protocol</a>
+        <a href="Science.html">Science</a>
+        <a href="Research.html">Research</a>
+        <a href="Press.html">Press</a>
+        <a href="Contact.html">Contact</a>
+        <a href="Privacy.html">Privacy</a>
+        <a href="Terms.html">Terms</a>
+        <a href="Refunds.html">Refunds</a>
+      </div>
+      <div style="text-align:right">v12.4 · 2026 · N=847</div>
+    </div>
+    <p class="footer-legal">APEX is a research-driven performance protocol, not a medical treatment. Projections are statistical estimates based on longitudinal cohort data (n=847) and are not guarantees. Individual outcomes vary with age, genetics, and adherence. Consult a physician before beginning any new physical protocol if you have pre-existing medical conditions.</p>
+  </div>
+</footer>
+</body>
+</html>

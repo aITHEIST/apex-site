@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APEX — Height Assessment Protocol</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+:root{
+  --bg:#f6f4ee; --paper:#fff; --ink:#0a0a0a; --ink-2:#222; --mid:#5b5b60; --dim:#9b9b9f;
+  --line:#dad7cd; --line-2:#e7e4dc;
+  --hot:#e0431a; --hot-dim:#fde9e1;
+  --green:#1f5740; --green-dim:#e8f0ec;
+  --yellow:#ffe14a;
+  --display:'Archivo Black',sans-serif;
+  --serif:'Instrument Serif',serif;
+  --sans:'Archivo',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select{font:inherit;color:inherit;background:none;border:none;outline:none}
+img,svg{display:block;max-width:100%}
+::selection{background:var(--ink);color:var(--yellow)}
+
+.shell{display:flex;flex-direction:column;min-height:100vh}
+
+/* ============ NAV ============ */
+.nav{background:var(--bg);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50;backdrop-filter:blur(10px)}
+.nav-i{max-width:1280px;margin:0 auto;padding:14px 28px;display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-size:18px;letter-spacing:.02em;color:var(--ink)}
+.brand .sq{width:14px;height:14px;background:var(--hot)}
+.nav-mid{justify-self:center;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--mid);display:flex;gap:10px;align-items:center}
+.nav-mid .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px rgba(31,87,64,.4);animation:blink 2s infinite}
+@keyframes blink{50%{opacity:.4}}
+.nav-mid .serif{font-family:var(--serif);font-style:italic;font-weight:400;font-size:13px;color:var(--ink);text-transform:none;letter-spacing:0;margin-left:6px}
+.nav-back{display:inline-flex;gap:8px;align-items:center;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);transition:color .15s}
+.nav-back:hover{color:var(--hot)}
+
+/* ============ STEPPER ============ */
+.stepper{
+  max-width:1280px;margin:0 auto;width:100%;padding:24px 28px 0;
+  display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;
+}
+.st{display:flex;align-items:center;gap:0;font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.st.active{color:var(--hot)}
+.st.done{color:var(--green)}
+.st .n{
+  width:30px;height:30px;display:flex;align-items:center;justify-content:center;
+  border:1.5px solid currentColor;font-family:var(--display);font-size:11px;
+  position:relative;background:var(--paper);
+}
+.st.active .n{background:var(--hot);color:var(--paper);border-color:var(--hot)}
+.st.done .n{background:var(--green);color:var(--paper);border-color:var(--green)}
+.st.done .n::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--sans);font-size:13px}
+.st.done .n span{display:none}
+.st .lbl{margin-left:10px}
+.st-conn{width:36px;height:1.5px;background:var(--line);margin:0 2px}
+.st-conn.done{background:var(--green)}
+@media(max-width:780px){
+  .st .lbl{display:none}
+  .st-conn{width:14px}
+}
+
+/* ============ STAGE ============ */
+.stage{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:36px 28px 56px}
+.card{
+  width:100%;max-width:1080px;background:var(--paper);border:1px solid var(--ink);
+  box-shadow:10px 10px 0 var(--ink);position:relative;
+}
+.card::before{
+  content:'';position:absolute;top:0;right:0;width:60px;height:60px;
+  background:linear-gradient(225deg,transparent 50%,var(--line-2) 50%);pointer-events:none;
+}
+.card-head{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 28px;border-bottom:1px solid var(--line);
+  font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--mid);text-transform:uppercase;
+}
+.card-head .file{font-family:var(--serif);font-style:italic;font-weight:400;font-size:14px;color:var(--ink);letter-spacing:0;text-transform:none}
+.card-head .session{color:var(--green);display:flex;gap:7px;align-items:center}
+.card-head .session::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:blink 1.4s infinite}
+
+.body{padding:48px 56px}
+@media(max-width:780px){.body{padding:32px 24px}}
+
+.step{display:none;animation:in .4s cubic-bezier(.22,.9,.28,1.15) both}
+.step.live{display:block}
+@keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+.kicker{
+  font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--hot);text-transform:uppercase;
+  display:flex;gap:14px;align-items:center;margin-bottom:14px;
+}
+.kicker .idx{font-family:var(--serif);font-style:italic;font-weight:400;font-size:36px;color:var(--hot);letter-spacing:-.02em;line-height:.8}
+.head{
+  font-family:var(--display);font-weight:900;
+  font-size:clamp(40px,5.5vw,72px);line-height:.92;letter-spacing:-.035em;text-wrap:balance;
+}
+.head .serif{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--hot);font-size:1.06em;letter-spacing:-.02em}
+.head .ul{background:linear-gradient(transparent 65%,var(--yellow) 65%,var(--yellow) 92%,transparent 92%)}
+.lede{font-size:17px;color:var(--ink-2);max-width:64ch;margin-top:18px;font-weight:500;line-height:1.55}
+.lede strong{background:var(--yellow);padding:1px 4px;font-weight:600}
+
+/* ============ STEP 1 LAYOUT ============ */
+.intro-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:start;margin-top:36px}
+@media(max-width:900px){.intro-grid{grid-template-columns:1fr;gap:32px}}
+
+.strip{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--ink);background:var(--bg)}
+.strip-c{padding:18px 14px;border-left:1px solid var(--line);text-align:center}
+.strip-c:first-child{border-left:0}
+.strip-c .n{font-family:var(--display);font-size:34px;line-height:1;letter-spacing:-.025em;color:var(--ink)}
+.strip-c .n.ac{color:var(--hot)}
+.strip-c .n.gr{color:var(--green)}
+.strip-c .l{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--mid);text-transform:uppercase;margin-top:8px}
+
+.bullets{list-style:none;margin-top:24px;display:flex;flex-direction:column;gap:12px}
+.bullets li{
+  font-size:15px;color:var(--ink-2);padding-left:30px;position:relative;line-height:1.55;font-weight:500;
+}
+.bullets li::before{
+  content:'';position:absolute;left:0;top:7px;width:18px;height:8px;
+  background:var(--hot);clip-path:polygon(0 50%,80% 0,100% 50%,80% 100%);
+}
+.bullets li b{font-weight:600;color:var(--ink)}
+
+/* Intro figure */
+.intro-fig{
+  background:var(--paper);border:1px solid var(--ink);box-shadow:6px 6px 0 var(--ink);
+  position:relative;overflow:hidden;aspect-ratio:5/6;
+}
+.intro-fig-tag{
+  position:absolute;top:14px;left:14px;background:var(--ink);color:var(--bg);
+  padding:5px 10px;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.14em;
+}
+.intro-fig-tag.r{background:var(--hot);color:var(--paper)}
+.intro-fig-svg{position:absolute;inset:0;width:100%;height:100%}
+
+/* ============ FORMS ============ */
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:28px}
+.fields.one{grid-template-columns:1fr}
+@media(max-width:640px){.fields{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:8px}
+.field .lbl{
+  font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--mid);text-transform:uppercase;
+  display:flex;justify-content:space-between;align-items:baseline;
+}
+.field .lbl .pid{color:var(--hot)}
+.field .lbl .opt{font-family:var(--serif);font-style:italic;font-weight:400;font-size:13px;color:var(--mid);text-transform:none;letter-spacing:0}
+.input,.select{
+  padding:14px 16px;background:var(--bg);border:1px solid var(--ink);
+  font-family:var(--mono);font-size:14.5px;color:var(--ink);font-weight:500;
+  transition:background .15s,box-shadow .15s,border-color .15s;
+}
+.input:focus,.select:focus{background:var(--paper);box-shadow:4px 4px 0 var(--hot);transform:translate(-2px,-2px)}
+.input::placeholder{color:var(--dim);font-weight:400}
+.select{cursor:pointer;appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(-45deg,transparent 50%,var(--ink) 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat}
+.select option{background:var(--paper);color:var(--ink)}
+
+/* Tiles */
+.tiles{display:grid;gap:10px;margin-top:14px}
+.tiles.c2{grid-template-columns:1fr 1fr}
+.tiles.c3{grid-template-columns:repeat(3,1fr)}
+.tiles.c4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:640px){.tiles.c3,.tiles.c4{grid-template-columns:1fr 1fr}}
+.tile{
+  padding:16px;background:var(--bg);border:1px solid var(--ink);
+  text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:6px;min-height:84px;
+  transition:transform .15s,box-shadow .15s,background .15s;
+}
+.tile:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink);background:var(--paper)}
+.tile.on{
+  background:var(--hot);color:var(--paper);
+  transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink);
+}
+.tile.on .tile-k,.tile.on .tile-s{color:var(--paper)}
+.tile-k{font-family:var(--display);font-size:18px;letter-spacing:-.015em;color:var(--ink);line-height:1.1}
+.tile-s{font-size:13px;color:var(--mid);line-height:1.45;font-weight:500}
+.tile.on .tile-s{color:rgba(255,255,255,.85)}
+
+/* Slider */
+.slider-wrap{margin-top:24px}
+.slider-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px}
+.slider-name{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--mid);text-transform:uppercase}
+.slider-val{font-family:var(--display);font-size:32px;letter-spacing:-.02em;color:var(--hot);line-height:1}
+.slider-val .serif{font-family:var(--serif);font-style:italic;font-weight:400;font-size:.7em;color:var(--mid);margin-left:6px;letter-spacing:0}
+.slider{-webkit-appearance:none;appearance:none;width:100%;height:6px;background:linear-gradient(90deg,#dad7cd 0%,var(--hot) 50%,var(--green) 100%);outline:none;border:1px solid var(--ink)}
+.slider::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;background:var(--ink);border:1px solid var(--ink);cursor:pointer;box-shadow:3px 3px 0 var(--hot)}
+.slider::-moz-range-thumb{width:24px;height:24px;background:var(--ink);border:1px solid var(--ink);cursor:pointer;box-shadow:3px 3px 0 var(--hot)}
+.slider-scale{display:flex;justify-content:space-between;margin-top:10px;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--mid);text-transform:uppercase}
+.slider-hint{margin-top:10px;font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid)}
+
+/* Live proj */
+.lp{
+  margin-top:28px;background:var(--ink);color:var(--paper);
+  padding:18px 22px;display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;
+}
+.lp .lbl{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--yellow);text-transform:uppercase}
+.lp .bar{height:6px;background:#2a2a2c;position:relative;overflow:hidden}
+.lp .bar i{position:absolute;inset:0 100% 0 0;background:linear-gradient(90deg,var(--hot),var(--yellow));transition:right .5s cubic-bezier(.22,.9,.28,1);box-shadow:0 0 12px rgba(224,67,26,.5)}
+.lp .val{font-family:var(--display);font-size:36px;line-height:1;letter-spacing:-.025em;color:var(--hot)}
+
+/* Nav */
+.nav-row{margin-top:36px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding-top:24px;border-top:1px solid var(--line)}
+.btn{
+  padding:16px 24px;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  border:1px solid var(--ink);box-shadow:4px 4px 0 var(--ink);
+  transition:transform .15s,box-shadow .15s,background .15s;cursor:pointer;
+  display:inline-flex;align-items:center;gap:10px;
+}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.btn:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+.btn.primary{background:var(--ink);color:var(--bg)}
+.btn.primary:hover{background:var(--hot)}
+.btn.primary .arr{width:24px;height:24px;background:var(--hot);color:var(--ink);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;transition:background .15s,color .15s}
+.btn.primary:hover .arr{background:var(--bg);color:var(--hot)}
+.btn.go{background:var(--green);color:var(--paper)}
+.btn.go:hover{background:#2c7556}
+.btn.ghost{background:var(--paper);color:var(--ink-2)}
+.btn.ghost:hover{color:var(--hot);border-color:var(--hot);box-shadow:6px 6px 0 var(--hot)}
+.nav-meta{margin-left:auto;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--mid);text-transform:uppercase}
+
+/* ============ ANALYSIS ============ */
+.prog-wrap{margin-top:32px}
+.prog-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+.prog-label{font-family:var(--mono);font-size:11.5px;font-weight:700;letter-spacing:.12em;color:var(--hot);text-transform:uppercase}
+.prog-pct{font-family:var(--display);font-size:38px;line-height:1;letter-spacing:-.025em;color:var(--ink)}
+.prog-bar{height:8px;background:var(--bg);border:1px solid var(--ink);overflow:hidden;position:relative}
+.prog-fill{position:absolute;inset:0 100% 0 0;background:linear-gradient(90deg,var(--hot),var(--green));transition:right .3s linear}
+
+.term{
+  margin-top:24px;background:var(--ink);color:var(--bg);
+  padding:18px 22px;font-family:var(--mono);font-size:12.5px;line-height:1.85;
+  height:260px;overflow:hidden;position:relative;
+}
+.term::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--hot)}
+.term::after{content:'';position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(180deg,transparent,var(--ink))}
+.tline{display:flex;gap:12px;opacity:0;animation:tin .25s ease forwards;align-items:baseline}
+.tline .t{color:#8a8a8d;flex-shrink:0}
+.tline .a{color:var(--hot);flex-shrink:0;font-weight:700}
+.tline.ok .a{color:var(--yellow)}
+.tline .m{color:var(--bg);font-weight:500}
+.tline.ok .m{color:var(--yellow);font-weight:600}
+@keyframes tin{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:none}}
+
+/* ============ RESULT ============ */
+.result-head{
+  margin-top:8px;padding:32px 36px;background:var(--paper);
+  border:1px solid var(--ink);border-left:5px solid var(--hot);
+  text-align:center;position:relative;
+}
+.result-head::before{
+  content:'BIOMETRIC REPORT';position:absolute;top:-12px;left:24px;
+  background:var(--hot);color:var(--paper);padding:4px 10px;border:1px solid var(--ink);
+  font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.14em;
+}
+.result-stamp{display:inline-flex;gap:10px;align-items:baseline;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--mid);text-transform:uppercase;margin-bottom:14px}
+.result-stamp::before{content:'✓';color:var(--green);font-family:var(--sans);font-size:14px}
+.result-stamp .id{color:var(--ink)}
+.result-title{
+  font-family:var(--display);font-weight:900;font-size:clamp(36px,5vw,60px);line-height:.95;letter-spacing:-.03em;text-wrap:balance;
+}
+.result-title .serif{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--hot);font-size:1.06em;letter-spacing:-.02em}
+.result-sub{margin-top:14px;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.1em;color:var(--mid);text-transform:uppercase}
+.result-sub .conf{color:var(--green)}
+
+.result-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:24px;margin-top:28px}
+@media(max-width:900px){.result-grid{grid-template-columns:1fr}}
+
+.bars{background:var(--paper);border:1px solid var(--ink);padding:26px 28px}
+.bars-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:22px}
+.bars-tag{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--mid);text-transform:uppercase}
+.bars-delta{font-family:var(--display);font-size:48px;line-height:1;letter-spacing:-.03em;color:var(--hot)}
+.bars-body{display:flex;gap:36px;align-items:flex-end;justify-content:center;height:240px}
+.bar-col{display:flex;flex-direction:column;align-items:center;gap:10px;flex:1;max-width:120px;height:100%;justify-content:flex-end}
+.bar-num{font-family:var(--display);font-size:18px;letter-spacing:-.015em;line-height:1.1;text-align:center}
+.bar-num.g{color:var(--hot)}
+.bar-num .small{display:block;font-family:var(--serif);font-style:italic;font-weight:400;font-size:14px;color:var(--mid);margin-top:4px;letter-spacing:0}
+.bar{width:74px;min-height:30px;border:1px solid var(--ink);transition:height 1s cubic-bezier(.22,.9,.28,1.1);position:relative;overflow:hidden}
+.bar.cur{background:repeating-linear-gradient(45deg,var(--line-2) 0 6px,var(--bg) 6px 7px)}
+.bar.proj{background:linear-gradient(180deg,var(--hot) 0%,#ffb89e 100%);box-shadow:3px 3px 0 var(--ink)}
+.bar.proj::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent,rgba(255,255,255,.25),transparent);animation:shine 3s ease-in-out infinite}
+@keyframes shine{0%,100%{transform:translateY(110%)}50%{transform:translateY(-110%)}}
+.bar-lbl{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--mid);text-transform:uppercase}
+
+.chart{background:var(--paper);border:1px solid var(--ink);padding:24px}
+.chart-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px}
+.chart-title{font-family:var(--display);font-size:20px;letter-spacing:-.015em;line-height:1.1}
+.chart-title .serif{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--hot);font-size:1.1em}
+.chart-legend{display:flex;gap:14px;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--mid);text-transform:uppercase}
+.chart-legend span{display:flex;align-items:center;gap:6px}
+.chart-legend i{width:14px;height:2px;background:var(--ink)}
+.chart-legend .g i{background:var(--hot)}
+.chart-svg{width:100%;height:220px;display:block}
+.chart-phases{display:flex;justify-content:space-between;margin-top:10px;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--mid);text-transform:uppercase}
+
+/* Readout */
+.readout{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--ink);background:var(--bg);margin-top:24px}
+@media(max-width:640px){.readout{grid-template-columns:repeat(2,1fr)}}
+.ro{padding:18px 16px;text-align:center;border-left:1px solid var(--line)}
+.ro:first-child{border-left:0}
+@media(max-width:640px){.ro:nth-child(3){border-left:0}.ro:nth-child(odd){border-left:0}.ro:nth-child(3),.ro:nth-child(4){border-top:1px solid var(--line)}}
+.ro .l{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--mid);text-transform:uppercase;margin-bottom:8px}
+.ro .v{font-family:var(--display);font-size:26px;letter-spacing:-.02em;line-height:1;color:var(--ink)}
+.ro .v.hot{color:var(--hot)}
+.ro .v.gr{color:var(--green)}
+
+/* Breakdown */
+.bd{background:var(--paper);border:1px solid var(--ink);padding:24px 28px;margin-top:24px}
+.bd-title{font-family:var(--display);font-size:22px;letter-spacing:-.015em;margin-bottom:18px;display:flex;justify-content:space-between;align-items:baseline}
+.bd-title small{font-family:var(--mono);font-weight:500;font-size:11px;letter-spacing:.12em;color:var(--mid);text-transform:uppercase}
+.bd-row{display:grid;grid-template-columns:1fr 120px 80px;gap:14px;padding:12px 0;border-bottom:1px dashed var(--line);align-items:center;font-size:14.5px}
+.bd-row:last-child{border-bottom:0}
+.bd-name{color:var(--ink-2);font-weight:500}
+.bd-meter{height:6px;background:var(--bg);border:1px solid var(--ink);position:relative;overflow:hidden}
+.bd-meter-fill{position:absolute;inset:0 100% 0 0;background:var(--hot);transition:right .8s ease}
+.bd-meter-fill.g{background:var(--green)}
+.bd-meter-fill.a{background:var(--yellow)}
+.bd-pts{font-family:var(--display);font-size:18px;letter-spacing:-.015em;text-align:right;color:var(--hot)}
+.bd-row.total{border-top:2px solid var(--ink);border-bottom:0;margin-top:8px;padding-top:14px}
+.bd-row.total .bd-name{color:var(--ink);font-weight:700;font-family:var(--display);font-size:14px;letter-spacing:.02em}
+
+/* CTA box */
+.cta-box{
+  margin-top:28px;background:var(--ink);color:var(--bg);
+  padding:32px 36px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;
+  border:1px solid var(--ink);position:relative;
+}
+@media(max-width:780px){.cta-box{grid-template-columns:1fr;text-align:center}}
+.cta-box::before{
+  content:'YOUR REPORT IS SAVED';position:absolute;top:-12px;left:24px;
+  background:var(--hot);color:var(--paper);padding:4px 12px;
+  font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.14em;
+}
+.cta-title{font-family:var(--display);font-size:28px;line-height:1.1;letter-spacing:-.02em;margin-bottom:8px}
+.cta-title .serif{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--hot);font-size:1.1em}
+.cta-sub{font-size:14.5px;color:#c8c8c8;line-height:1.55}
+.cta-sub s{color:#7a7a7d}
+.cta-sub b{background:var(--yellow);color:var(--ink);padding:0 4px;font-weight:600}
+.cta-btn{
+  padding:20px 28px;background:var(--hot);color:var(--ink);
+  font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  border:1px solid var(--paper);box-shadow:4px 4px 0 var(--paper);
+  display:flex;flex-direction:column;gap:4px;align-items:center;
+  transition:transform .15s,box-shadow .15s,background .15s;cursor:pointer;
+}
+.cta-btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--paper);background:var(--yellow)}
+.cta-btn small{font-family:var(--serif);font-style:italic;font-weight:400;font-size:13px;letter-spacing:0;text-transform:none;color:var(--ink)}
+
+.retake{display:block;text-align:center;margin-top:22px;font-family:var(--mono);font-size:11.5px;font-weight:700;letter-spacing:.12em;color:var(--mid);text-transform:uppercase;cursor:pointer;transition:color .15s}
+.retake:hover{color:var(--hot)}
+.disclaimer{margin-top:18px;font-family:var(--serif);font-style:italic;font-size:13px;color:var(--mid);line-height:1.6;text-align:center;max-width:60ch;margin-left:auto;margin-right:auto}
+
+/* Field error */
+.input.err,.select.err{box-shadow:4px 4px 0 var(--hot);background:var(--hot-dim)}
+.tile-group.err{outline:2px dashed var(--hot);outline-offset:6px}
+
+/* ============ MOBILE (≤640px) ============ */
+@media(max-width:640px){
+  .nav-i{padding:11px 16px;gap:8px;grid-template-columns:auto 1fr auto}
+  .nav-mid{display:none}
+  .brand{font-size:16px}
+  .nav-back{font-size:10px;letter-spacing:.08em}
+
+  .stepper{padding:18px 12px 0;gap:0;justify-content:flex-start;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .stepper::-webkit-scrollbar{display:none}
+  .st{flex-shrink:0}
+  .st .n{width:26px;height:26px;font-size:10px}
+  .st-conn{width:14px;margin:0 2px}
+
+  .stage{padding:20px 14px 36px;align-items:flex-start}
+  .card{box-shadow:5px 5px 0 var(--ink)}
+  .card::before{width:36px;height:36px}
+  .card-head{padding:11px 14px;font-size:10px;letter-spacing:.08em;gap:8px;flex-wrap:wrap}
+  .card-head .file{font-size:12px}
+  .card-head .session{font-size:10px}
+
+  .body{padding:24px 18px}
+
+  .kicker{font-size:10px;letter-spacing:.1em;gap:10px}
+  .kicker .idx{font-size:30px}
+  .head{font-size:36px;line-height:.96;letter-spacing:-.03em;overflow-wrap:break-word}
+  .head .serif{font-size:1em}
+  .lede{font-size:15px;line-height:1.55;margin-top:14px}
+
+  .intro-grid{gap:24px;margin-top:24px}
+  .strip-c{padding:14px 8px}
+  .strip-c .n{font-size:24px}
+  .strip-c .l{font-size:9px;letter-spacing:.08em;margin-top:6px}
+  .bullets li{font-size:14px;padding-left:24px}
+  .bullets li::before{top:7px;width:16px;height:7px}
+
+  .intro-fig{aspect-ratio:5/6}
+  .intro-fig-tag{font-size:9px;padding:4px 8px;top:10px;left:10px;letter-spacing:.1em}
+
+  .fields,.fields.one{grid-template-columns:1fr;gap:12px;margin-top:20px}
+  .field .lbl{font-size:10px;letter-spacing:.1em}
+  .input,.select{padding:12px 14px;font-size:14px}
+
+  .tiles{margin-top:10px}
+  .tiles.c3,.tiles.c4{grid-template-columns:1fr 1fr}
+  .tile{padding:13px;min-height:74px;gap:4px}
+  .tile-k{font-size:16px}
+  .tile-s{font-size:12px;line-height:1.4}
+
+  .slider-wrap{margin-top:20px}
+  .slider-name{font-size:10px;letter-spacing:.1em}
+  .slider-val{font-size:26px}
+  .slider-val .serif{font-size:.65em}
+  .slider-scale{font-size:9px;letter-spacing:.08em}
+  .slider-hint{font-size:13px}
+
+  .lp{padding:14px 16px;gap:12px;grid-template-columns:1fr;justify-items:start}
+  .lp .bar{width:100%;height:5px}
+  .lp .val{font-size:30px}
+  .lp .lbl{font-size:10px;letter-spacing:.1em}
+
+  .nav-row{margin-top:24px;padding-top:18px;flex-wrap:wrap}
+  .btn{padding:13px 18px;font-size:11px;letter-spacing:.08em;flex:1;min-width:0;justify-content:center;gap:8px}
+  .btn.ghost{flex:0 1 auto;padding:13px 14px}
+  .btn .arr{width:22px;height:22px;font-size:11px}
+  .nav-meta{flex-basis:100%;margin-left:0;text-align:right;margin-top:2px;font-size:9.5px;letter-spacing:.08em}
+
+  /* Analysis */
+  .prog-pct{font-size:30px}
+  .term{padding:14px 16px;font-size:11px;height:200px}
+
+  /* Result */
+  .result-head{padding:22px 18px}
+  .result-head::before{font-size:9px;padding:3px 8px;left:14px;top:-10px}
+  .result-stamp{font-size:10px;letter-spacing:.1em;margin-bottom:10px}
+  .result-title{font-size:28px;letter-spacing:-.02em}
+  .result-sub{font-size:10.5px;letter-spacing:.08em;margin-top:10px}
+
+  .result-grid{gap:18px;margin-top:22px}
+  .bars{padding:20px}
+  .bars-delta{font-size:30px}
+  .bars-body{gap:24px;height:200px}
+  .bar-num{font-size:14px}
+  .bar-num .small{font-size:11px}
+  .bar{width:54px}
+
+  .chart{padding:18px}
+  .chart-title{font-size:17px}
+  .chart-legend{font-size:9px;gap:10px}
+  .chart-svg{height:180px}
+
+  .readout{margin-top:18px}
+  .ro{padding:14px 10px}
+  .ro .v{font-size:20px}
+
+  .bd{padding:18px 20px;margin-top:18px}
+  .bd-title{font-size:18px;margin-bottom:14px}
+  .bd-title small{font-size:9.5px;letter-spacing:.1em}
+  .bd-row{grid-template-columns:1fr 80px 64px;gap:10px;font-size:13px}
+  .bd-pts{font-size:15px}
+
+  .cta-box{margin-top:22px;padding:22px;grid-template-columns:1fr;text-align:center;gap:18px}
+  .cta-box::before{font-size:9px;padding:3px 8px;left:18px;top:-10px}
+  .cta-title{font-size:22px;line-height:1.15;margin-bottom:6px}
+  .cta-sub{font-size:13px;line-height:1.5}
+  .cta-btn{padding:16px 22px;font-size:12px;letter-spacing:.12em;gap:3px;justify-self:stretch}
+  .cta-btn small{font-size:11.5px}
+
+  .retake{margin-top:18px;font-size:10.5px;letter-spacing:.1em}
+  .disclaimer{margin-top:14px;font-size:12px}
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-i">
+      <a class="brand" href="index.html"><span class="sq"></span>APEX</a>
+      <div class="nav-mid">
+        FILE · HEIGHT-ASSESSMENT-TERMINAL
+        <span class="serif">— a 60-second projection</span>
+      </div>
+      <a class="nav-back" href="index.html">← Back to home</a>
+    </div>
+  </nav>
+
+  <!-- STEPPER -->
+  <div class="stepper" id="stepper">
+    <div class="st active" data-step="1"><span class="n"><span>01</span></span><span class="lbl">Identity</span></div>
+    <span class="st-conn"></span>
+    <div class="st" data-step="2"><span class="n"><span>02</span></span><span class="lbl">Baseline</span></div>
+    <span class="st-conn"></span>
+    <div class="st" data-step="3"><span class="n"><span>03</span></span><span class="lbl">Genetics</span></div>
+    <span class="st-conn"></span>
+    <div class="st" data-step="4"><span class="n"><span>04</span></span><span class="lbl">Lifestyle</span></div>
+    <span class="st-conn"></span>
+    <div class="st" data-step="5"><span class="n"><span>05</span></span><span class="lbl">Analysis</span></div>
+    <span class="st-conn"></span>
+    <div class="st" data-step="6"><span class="n"><span>06</span></span><span class="lbl">Report</span></div>
+  </div>
+
+  <!-- STAGE -->
+  <div class="stage">
+    <div class="card">
+      <div class="card-head">
+        <span>● REC · APEX.TERMINAL</span>
+        <span class="file"><em>height-assessment.exe</em></span>
+        <span class="session">ENCRYPTED · LIVE</span>
+      </div>
+
+      <div class="body">
+
+        <!-- ========== STEP 1 ========== -->
+        <div class="step live" data-step="1">
+          <div class="kicker"><span class="idx">I.</span>Identity Lock</div>
+          <h1 class="head">Get your <span class="serif">projection</span><br>in <span class="ul">60 seconds.</span></h1>
+          <p class="lede">6 calibration steps. Our model cross-references your parameters against <strong>847 subject files</strong> to project a realistic 12-week delta. No account. No email gate after this.</p>
+
+          <div class="intro-grid">
+            <div>
+              <div class="strip">
+                <div class="strip-c"><div class="n">847</div><div class="l">Subjects</div></div>
+                <div class="strip-c"><div class="n ac">+2.4″</div><div class="l">Median Δ</div></div>
+                <div class="strip-c"><div class="n gr">12w</div><div class="l">Protocol</div></div>
+              </div>
+              <ul class="bullets">
+                <li><b>Postural reserve</b> — instant height you're losing right now</li>
+                <li><b>Endocrine ceiling</b> — your HGH pulse envelope</li>
+                <li><b>Bone response</b> — Wolff's Law-based remodeling capacity</li>
+                <li><b>12-week trajectory</b> — week-by-week projection plot</li>
+              </ul>
+
+              <div class="fields" style="margin-top:30px">
+                <div class="field">
+                  <label class="lbl"><span><span class="pid">[ID-01]</span> First name</span><span class="opt">required</span></label>
+                  <input class="input" id="f_name" placeholder="e.g. Marcus" autocomplete="given-name">
+                </div>
+                <div class="field">
+                  <label class="lbl"><span><span class="pid">[ID-02]</span> Email</span><span class="opt">for the report</span></label>
+                  <input class="input" id="f_email" type="email" placeholder="you@domain.com" autocomplete="email">
+                </div>
+              </div>
+            </div>
+
+            <div class="intro-fig">
+              <div class="intro-fig-tag">FIG · GROWTH PROJECTION · 16W</div>
+              <svg class="intro-fig-svg" viewBox="0 0 320 380" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                <defs>
+                  <linearGradient id="ag" x1="0" x2="0" y1="0" y2="1">
+                    <stop offset="0%" stop-color="#e0431a" stop-opacity="0.28"/>
+                    <stop offset="100%" stop-color="#e0431a" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <g font-family="JetBrains Mono" font-size="8" font-weight="700" fill="#5b5b60" letter-spacing="0.5">
+                  <text x="26" y="62">190</text><text x="26" y="122">183</text><text x="26" y="182">176</text><text x="26" y="242">172</text><text x="26" y="302">165</text>
+                </g>
+                <g font-family="JetBrains Mono" font-size="8" font-weight="700" fill="#5b5b60" letter-spacing="0.5" text-anchor="middle">
+                  <text x="60" y="350">NOW</text><text x="120" y="350">W4</text><text x="180" y="350">W8</text><text x="240" y="350">W12</text><text x="290" y="350">W16</text>
+                </g>
+                <g stroke="#dad7cd" stroke-width="0.6">
+                  <line x1="55" y1="58" x2="305" y2="58"/><line x1="55" y1="118" x2="305" y2="118"/><line x1="55" y1="178" x2="305" y2="178"/><line x1="55" y1="238" x2="305" y2="238"/><line x1="55" y1="298" x2="305" y2="298"/>
+                </g>
+                <g stroke="#e7e4dc" stroke-width="0.5" stroke-dasharray="2 3">
+                  <line x1="60" y1="46" x2="60" y2="336"/><line x1="120" y1="46" x2="120" y2="336"/><line x1="180" y1="46" x2="180" y2="336"/><line x1="240" y1="46" x2="240" y2="336"/><line x1="290" y1="46" x2="290" y2="336"/>
+                </g>
+                <rect x="55" y="54" width="250" height="14" fill="#fde9e1" stroke="#e0431a" stroke-width="0.6" stroke-dasharray="3 3"/>
+                <text x="300" y="50" font-family="JetBrains Mono" font-size="8" font-weight="700" fill="#e0431a" letter-spacing="0.6" text-anchor="end">TARGET ZONE</text>
+                <line x1="55" y1="238" x2="305" y2="238" stroke="#0a0a0a" stroke-width="0.9" stroke-dasharray="1 3"/>
+                <text x="60" y="232" font-family="JetBrains Mono" font-size="8" font-weight="700" fill="#0a0a0a" letter-spacing="0.5">BASELINE · 172CM</text>
+                <path d="M60,238 C100,234 130,216 150,184 C170,152 195,116 240,82 C270,66 290,62 290,62 L290,238 Z" fill="url(#ag)"/>
+                <path d="M60,238 C100,234 130,216 150,184 C170,152 195,116 240,82 C270,66 290,62 290,62" fill="none" stroke="#e0431a" stroke-width="2.4" stroke-linecap="round"/>
+                <circle cx="60" cy="238" r="4" fill="#f6f4ee" stroke="#0a0a0a" stroke-width="1.5"/>
+                <circle cx="120" cy="218" r="2.5" fill="#e0431a" opacity="0.7"/>
+                <circle cx="180" cy="166" r="2.5" fill="#e0431a" opacity="0.85"/>
+                <circle cx="240" cy="82" r="3.5" fill="#1f5740"/>
+                <circle cx="240" cy="82" r="7" fill="none" stroke="#1f5740" stroke-width="1.2" opacity="0.5">
+                  <animate attributeName="r" values="7;13;7" dur="2.2s" repeatCount="indefinite"/>
+                  <animate attributeName="opacity" values="0.6;0;0.6" dur="2.2s" repeatCount="indefinite"/>
+                </circle>
+                <g font-family="Archivo Black" letter-spacing="0">
+                  <rect x="194" y="86" width="86" height="22" fill="#fff" stroke="#1f5740" stroke-width="1.2"/>
+                  <text x="237" y="102" font-size="11" fill="#1f5740" text-anchor="middle">+18CM · 190</text>
+                </g>
+                <line x1="240" y1="108" x2="240" y2="82" stroke="#1f5740" stroke-width="0.8" stroke-dasharray="1 2"/>
+                <g font-family="Archivo Black">
+                  <rect x="48" y="244" width="70" height="18" fill="#fff" stroke="#dad7cd" stroke-width="0.8"/>
+                  <text x="83" y="256" font-size="9" fill="#5b5b60" text-anchor="middle">START · 172</text>
+                </g>
+              </svg>
+            </div>
+          </div>
+
+          <div class="nav-row">
+            <button class="btn primary" onclick="go(2)">
+              Begin assessment <span class="arr">→</span>
+            </button>
+            <span class="nav-meta">Step 01 / 06 · ~60s total</span>
+          </div>
+        </div>
+
+        <!-- ========== STEP 2 ========== -->
+        <div class="step" data-step="2">
+          <div class="kicker"><span class="idx">II.</span>Baseline Capture</div>
+          <h1 class="head">Your current <span class="serif">readings.</span></h1>
+          <p class="lede">Anchor your projection. Be accurate — <strong>morning height</strong> (within 15 min of waking) is ~0.4″ taller than evening.</p>
+
+          <div class="fields">
+            <div class="field">
+              <label class="lbl"><span><span class="pid">[BL-01]</span> Age</span></label>
+              <input class="input" id="f_age" type="number" min="14" max="60" placeholder="e.g. 21" oninput="liveProj()">
+            </div>
+            <div class="field">
+              <label class="lbl"><span><span class="pid">[BL-02]</span> Current height (cm)</span></label>
+              <input class="input" id="f_height" type="number" min="140" max="220" placeholder="e.g. 172" oninput="liveProj()">
+            </div>
+            <div class="field">
+              <label class="lbl"><span><span class="pid">[BL-03]</span> Weight (kg)</span></label>
+              <input class="input" id="f_weight" type="number" min="35" max="200" placeholder="e.g. 68" oninput="liveProj()">
+            </div>
+            <div class="field">
+              <label class="lbl"><span><span class="pid">[BL-04]</span> Biological sex</span></label>
+              <select class="select" id="f_sex" onchange="liveProj()">
+                <option value="">Select...</option>
+                <option value="m">Male</option>
+                <option value="f">Female</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="slider-wrap">
+            <div class="slider-row">
+              <span class="slider-name">[BL-05] Posture self-rating</span>
+              <span class="slider-val" id="postureVal">5<span class="serif">/10</span></span>
+            </div>
+            <input type="range" class="slider" id="f_posture" min="1" max="10" value="5" oninput="document.getElementById('postureVal').innerHTML=this.value+'<span class=&quot;serif&quot;>/10</span>';liveProj()">
+            <div class="slider-scale"><span>Slouched</span><span>Average</span><span>Perfect</span></div>
+            <div class="slider-hint">Lower rating = more "hidden height" you'll recover in Phase 01.</div>
+          </div>
+
+          <div class="lp">
+            <span class="lbl">Live projection</span>
+            <div class="bar"><i id="lpBar2"></i></div>
+            <span class="val" id="lpVal2">—</span>
+          </div>
+
+          <div class="nav-row">
+            <button class="btn ghost" onclick="go(1)">← Back</button>
+            <button class="btn primary" onclick="go(3)">Continue <span class="arr">→</span></button>
+            <span class="nav-meta">02 / 06</span>
+          </div>
+        </div>
+
+        <!-- ========== STEP 3 ========== -->
+        <div class="step" data-step="3">
+          <div class="kicker"><span class="idx">III.</span>Genetic Baseline</div>
+          <h1 class="head">Inherited <span class="serif">parameters.</span></h1>
+          <p class="lede">Parental heights set your genetic ceiling. <strong>Most males end up 2–3″ below their theoretical max</strong> due to posture, sleep, and endocrine inefficiency. APEX targets that gap.</p>
+
+          <div class="fields">
+            <div class="field">
+              <label class="lbl"><span><span class="pid">[GN-01]</span> Father's height (cm)</span></label>
+              <input class="input" id="f_dad" type="number" min="140" max="220" placeholder="e.g. 178" oninput="liveProj()">
+            </div>
+            <div class="field">
+              <label class="lbl"><span><span class="pid">[GN-02]</span> Mother's height (cm)</span></label>
+              <input class="input" id="f_mom" type="number" min="130" max="210" placeholder="e.g. 165" oninput="liveProj()">
+            </div>
+          </div>
+
+          <label class="lbl" style="display:block;margin-top:24px;margin-bottom:6px;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--mid);text-transform:uppercase">
+            <span class="pid" style="color:var(--hot)">[GN-03]</span> Growth plate status
+          </label>
+          <div class="tiles c3 tile-group" id="t_plate">
+            <button class="tile" data-val="open" onclick="pick(this,'plate')">
+              <span class="tile-k">Open</span>
+              <span class="tile-s">Under 18 &amp; still growing</span>
+            </button>
+            <button class="tile" data-val="fusing" onclick="pick(this,'plate')">
+              <span class="tile-k">Fusing</span>
+              <span class="tile-s">18–22 · slowed recently</span>
+            </button>
+            <button class="tile" data-val="closed" onclick="pick(this,'plate')">
+              <span class="tile-k">Closed</span>
+              <span class="tile-s">23+ · stopped growing</span>
+            </button>
+          </div>
+
+          <div class="lp">
+            <span class="lbl">Live projection</span>
+            <div class="bar"><i id="lpBar3"></i></div>
+            <span class="val" id="lpVal3">—</span>
+          </div>
+
+          <div class="nav-row">
+            <button class="btn ghost" onclick="go(2)">← Back</button>
+            <button class="btn primary" onclick="go(4)">Continue <span class="arr">→</span></button>
+            <span class="nav-meta">03 / 06</span>
+          </div>
+        </div>
+
+        <!-- ========== STEP 4 ========== -->
+        <div class="step" data-step="4">
+          <div class="kicker"><span class="idx">IV.</span>Lifestyle Signals</div>
+          <h1 class="head">Execution <span class="serif">capacity.</span></h1>
+          <p class="lede">These determine the hormonal environment your body works in. Each lever has measurable <strong>HGH &amp; bone-density impact</strong>. Projection recalculates as you select.</p>
+
+          <label class="lbl" style="display:block;margin-top:24px;margin-bottom:6px;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--mid);text-transform:uppercase">
+            <span class="pid" style="color:var(--hot)">[LS-01]</span> Current activity level
+          </label>
+          <div class="tiles c3 tile-group" id="t_activity">
+            <button class="tile" data-val="sed" onclick="pick(this,'activity')">
+              <span class="tile-k">Sedentary</span>
+              <span class="tile-s">Desk job · &lt;2 workouts/wk</span>
+            </button>
+            <button class="tile" data-val="mod" onclick="pick(this,'activity')">
+              <span class="tile-k">Moderate</span>
+              <span class="tile-s">Gym 2–3x/wk · light cardio</span>
+            </button>
+            <button class="tile" data-val="ath" onclick="pick(this,'activity')">
+              <span class="tile-k">Athletic</span>
+              <span class="tile-s">Sprints, jumps · 4x+/wk</span>
+            </button>
+          </div>
+
+          <div class="slider-wrap">
+            <div class="slider-row">
+              <span class="slider-name">[LS-02] Average sleep duration</span>
+              <span class="slider-val" id="sleepVal">7.0<span class="serif">hrs</span></span>
+            </div>
+            <input type="range" class="slider" id="f_sleep" min="40" max="100" value="70" oninput="document.getElementById('sleepVal').innerHTML=(this.value/10).toFixed(1)+'<span class=&quot;serif&quot;>hrs</span>';liveProj()">
+            <div class="slider-scale"><span>4h</span><span>7h</span><span>10h</span></div>
+            <div class="slider-hint">Deep sleep = 70% of daily HGH release. Under 7h = significant penalty.</div>
+          </div>
+
+          <label class="lbl" style="display:block;margin-top:24px;margin-bottom:6px;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--mid);text-transform:uppercase">
+            <span class="pid" style="color:var(--hot)">[LS-03]</span> Consistency commitment
+          </label>
+          <div class="tiles c4" id="t_commit">
+            <button class="tile" data-val="40" onclick="pick(this,'commit')">
+              <span class="tile-k">Casual</span>
+              <span class="tile-s">~3 days/wk</span>
+            </button>
+            <button class="tile" data-val="60" onclick="pick(this,'commit')">
+              <span class="tile-k">Solid</span>
+              <span class="tile-s">~5 days/wk</span>
+            </button>
+            <button class="tile on" data-val="80" onclick="pick(this,'commit')">
+              <span class="tile-k">Locked-in</span>
+              <span class="tile-s">6 days/wk</span>
+            </button>
+            <button class="tile" data-val="95" onclick="pick(this,'commit')">
+              <span class="tile-k">Obsessive</span>
+              <span class="tile-s">Daily · no miss</span>
+            </button>
+          </div>
+
+          <div class="lp">
+            <span class="lbl">Live projection · 12-week Δ</span>
+            <div class="bar"><i id="lpBar4"></i></div>
+            <span class="val" id="lpVal4">—</span>
+          </div>
+
+          <div class="nav-row">
+            <button class="btn ghost" onclick="go(3)">← Back</button>
+            <button class="btn go" onclick="runAnalysis()">Analyze my potential <span class="arr" style="background:var(--paper);color:var(--green)">→</span></button>
+            <span class="nav-meta">04 / 06</span>
+          </div>
+        </div>
+
+        <!-- ========== STEP 5 ========== -->
+        <div class="step" data-step="5">
+          <div class="kicker"><span class="idx">V.</span>Biometric Analysis</div>
+          <h1 class="head">Running <span class="serif">projection model.</span></h1>
+          <p class="lede">Cross-referencing your parameters against the APEX subject database <strong>(N=847)</strong>. Hold tight.</p>
+
+          <div class="prog-wrap">
+            <div class="prog-row">
+              <span class="prog-label" id="progLabel">Initializing...</span>
+              <span class="prog-pct" id="progPct">0%</span>
+            </div>
+            <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+          </div>
+
+          <div class="term" id="termWindow"></div>
+        </div>
+
+        <!-- ========== STEP 6 ========== -->
+        <div class="step" data-step="6">
+          <div class="result-head">
+            <div class="result-stamp">ASSESSMENT COMPLETE · FILE <span class="id" id="fileId">—</span></div>
+            <h1 class="result-title"><span id="rName">SUBJECT</span>, your 12-week <span class="serif">projection.</span></h1>
+            <div class="result-sub">Profile match confidence: <span class="conf" id="rConf">—</span></div>
+          </div>
+
+          <div class="result-grid">
+            <div class="bars">
+              <div class="bars-head">
+                <span class="bars-tag">Height delta</span>
+                <span class="bars-delta" id="rDelta">+—</span>
+              </div>
+              <div class="bars-body">
+                <div class="bar-col">
+                  <span class="bar-num">Now<span class="small" id="rCurH">—</span></span>
+                  <div class="bar cur" id="rBarCur" style="height:0"></div>
+                  <span class="bar-lbl">Current</span>
+                </div>
+                <div class="bar-col">
+                  <span class="bar-num g">W12<span class="small" id="rProjH">—</span></span>
+                  <div class="bar proj" id="rBarProj" style="height:0"></div>
+                  <span class="bar-lbl">Projected</span>
+                </div>
+              </div>
+            </div>
+            <div class="chart">
+              <div class="chart-head">
+                <span class="chart-title">12-week <span class="serif">trajectory</span></span>
+                <div class="chart-legend">
+                  <span><i></i>Baseline</span>
+                  <span class="g"><i></i>Projected</span>
+                </div>
+              </div>
+              <svg class="chart-svg" id="chartSvg" viewBox="0 0 400 220" preserveAspectRatio="none"></svg>
+              <div class="chart-phases">
+                <span>P1 · Foundation</span>
+                <span>P2 · Intensify</span>
+                <span>P3 · Peak</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="readout">
+            <div class="ro"><div class="l">Posture reserve</div><div class="v hot" id="mPosture">—</div></div>
+            <div class="ro"><div class="l">Bone response</div><div class="v gr" id="mBone">—</div></div>
+            <div class="ro"><div class="l">HGH ceiling</div><div class="v" style="color:var(--yellow);text-shadow:0 1px 0 var(--ink)" id="mHgh">—</div></div>
+            <div class="ro"><div class="l">Genetic gap</div><div class="v hot" id="mGap">—</div></div>
+          </div>
+
+          <div class="bd">
+            <div class="bd-title">Factor breakdown <small>contribution to projection</small></div>
+            <div id="bdList"></div>
+          </div>
+
+          <div class="cta-box">
+            <div>
+              <div class="cta-title">Now <span class="serif">unlock</span> the 12-week protocol.</div>
+              <div class="cta-sub">Full PDF + supplement stack + daily checklist + progress tracker.<br><s>$49 value</s> · <b>$24.99 once</b> · instant download.</div>
+            </div>
+            <a class="cta-btn" href="https://apex-growth.lemonsqueezy.com/checkout/buy/ad8413ac-8ba9-4b4f-a45b-e08e76596f09?embed=1">
+              <span>Get the protocol · $24.99</span>
+              <small>secure checkout via Lemon Squeezy</small>
+            </a>
+          </div>
+
+          <a class="retake" onclick="reset()">↺ Run assessment again</a>
+          <p class="disclaimer">Projection based on the APEX subject response model. Individual results vary by adherence, genetics, and full protocol execution. Not a substitute for medical advice.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const S={step:1,name:'',email:'',age:0,height:0,weight:0,sex:'',posture:5,dad:0,mom:0,plate:'',activity:'',sleep:7,commit:80,_submitted:false};
+
+function flashErr(el){
+  el.classList.add('err');
+  el.focus();
+  setTimeout(()=>el.classList.remove('err'),1500);
+}
+function submitLead(){
+  if(S._submitted) return;
+  if(!S.email||!S.name) return;
+  S._submitted = true;
+  const payload = {
+    access_key: 'ab28a828-af15-42fd-9edb-4637527d90d1',
+    subject: 'APEX Assessment Lead',
+    from_name: 'APEX Assessment',
+    name: S.name,
+    email: S.email,
+    message: 'New lead from height assessment. User started biometric calibration.'
+  };
+  fetch('https://api.web3forms.com/submit',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Accept':'application/json'},
+    body:JSON.stringify(payload)
+  }).catch(()=>{});
+  // Local backup
+  try{
+    const leads=JSON.parse(localStorage.getItem('apex_leads')||'[]');
+    leads.push({email:S.email,name:S.name,ts:new Date().toISOString()});
+    localStorage.setItem('apex_leads',JSON.stringify(leads.slice(-50)));
+  }catch(e){}
+}
+function flashGroup(id){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.classList.add('err');
+  setTimeout(()=>el.classList.remove('err'),1500);
+}
+function validate(step){
+  if(step===1){
+    const n=document.getElementById('f_name'),e=document.getElementById('f_email');
+    if(!n.value.trim()){flashErr(n);return false}
+    if(!e.value.trim()||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.value.trim())){flashErr(e);return false}
+  }
+  if(step===2){
+    const a=document.getElementById('f_age'),h=document.getElementById('f_height'),w=document.getElementById('f_weight'),s=document.getElementById('f_sex');
+    if(!a.value||+a.value<14||+a.value>60){flashErr(a);return false}
+    if(!h.value||+h.value<140||+h.value>220){flashErr(h);return false}
+    if(!w.value||+w.value<35||+w.value>200){flashErr(w);return false}
+    if(!s.value){flashErr(s);return false}
+  }
+  if(step===3){
+    const d=document.getElementById('f_dad'),m=document.getElementById('f_mom');
+    if(!d.value||+d.value<140||+d.value>220){flashErr(d);return false}
+    if(!m.value||+m.value<130||+m.value>210){flashErr(m);return false}
+    if(!S.plate){flashGroup('t_plate');return false}
+  }
+  if(step===4){
+    if(!S.activity){flashGroup('t_activity');return false}
+  }
+  return true;
+}
+
+function go(n){
+  if(n>S.step && !validate(S.step))return;
+  S.name=document.getElementById('f_name').value.trim()||S.name;
+  S.email=document.getElementById('f_email').value.trim()||S.email;
+  S.age=+document.getElementById('f_age').value||S.age;
+  S.height=+document.getElementById('f_height').value||S.height;
+  S.weight=+document.getElementById('f_weight').value||S.weight;
+  S.sex=document.getElementById('f_sex').value||S.sex;
+  S.dad=+document.getElementById('f_dad').value||S.dad;
+  S.mom=+document.getElementById('f_mom').value||S.mom;
+  S.posture=+document.getElementById('f_posture').value||S.posture;
+  S.sleep=+document.getElementById('f_sleep').value/10||S.sleep;
+
+  // Fire lead submission on first transition past step 1
+  if(S.step===1 && n>=2) submitLead();
+
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('live'));
+  document.querySelector(`.step[data-step="${n}"]`).classList.add('live');
+  document.querySelectorAll('#stepper .st').forEach(node=>{
+    const st=+node.dataset.step;
+    node.classList.remove('active','done');
+    if(st<n)node.classList.add('done');
+    else if(st===n)node.classList.add('active');
+  });
+  document.querySelectorAll('#stepper .st-conn').forEach((c,i)=>{
+    c.classList.toggle('done',i<n-1);
+  });
+  S.step=n;
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(n>=2 && n<=4)liveProj();
+}
+
+function pick(el,group){
+  const parent=el.parentElement;
+  parent.querySelectorAll('.tile').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  S[group]=el.dataset.val;
+  liveProj();
+}
+
+function computeProjection(){
+  const age=S.age||22,h=S.height||170;
+  const plate=S.plate||'closed';
+  const activity=S.activity||'mod';
+  const commit=+S.commit||80;
+  const sleep=+S.sleep||7;
+  const posture=+S.posture||5;
+  const dad=S.dad||176,mom=S.mom||164;
+  const postureInches=Math.max(0,(10-posture))*0.18;
+  const plateMult=plate==='open'?1.4:plate==='fusing'?0.85:0.55;
+  const ageMult=age<18?1.3:age<23?1.1:age<30?0.9:age<40?0.7:0.55;
+  const activityMult=activity==='ath'?1.2:activity==='mod'?1.0:0.7;
+  const boneInches=0.9*plateMult*ageMult*activityMult;
+  const sleepScore=Math.min(1,Math.max(0,(sleep-5)/3.5));
+  const commitScore=commit/100;
+  const hghInches=0.75*sleepScore*commitScore*activityMult;
+  const mid=(dad+mom+(S.sex==='f'?-13:13))/2;
+  const gapCm=Math.max(0,mid-h);
+  const geneticInches=Math.min(1.0,gapCm/2.54*0.18);
+  const subtotal=postureInches+boneInches+hghInches+geneticInches;
+  const commitFactor=0.55+commit*0.005;
+  const total=subtotal*commitFactor;
+  const totalCm=total*2.54;
+  const weekly=[];
+  for(let w=0;w<=12;w++){
+    const t=w/12;
+    const ease=t<0.33?0.4*(t/0.33):t<0.66?0.4+0.45*((t-0.33)/0.33):0.85+0.15*((t-0.66)/0.34);
+    weekly.push(+(totalCm*ease).toFixed(2));
+  }
+  return{totalInches:+total.toFixed(2),totalCm:+totalCm.toFixed(1),posture:+postureInches.toFixed(2),bone:+boneInches.toFixed(2),hgh:+hghInches.toFixed(2),genetic:+geneticInches.toFixed(2),weeklyCm:weekly,commitFactor};
+}
+
+function liveProj(){
+  S.age=+document.getElementById('f_age').value||0;
+  S.height=+document.getElementById('f_height').value||0;
+  S.weight=+document.getElementById('f_weight').value||0;
+  S.sex=document.getElementById('f_sex').value||'';
+  S.dad=+document.getElementById('f_dad').value||0;
+  S.mom=+document.getElementById('f_mom').value||0;
+  S.posture=+document.getElementById('f_posture').value||5;
+  S.sleep=+document.getElementById('f_sleep').value/10||7;
+  const p=computeProjection();
+  const pct=Math.min(100,p.totalInches/5*100);
+  const val=p.totalInches?'+'+p.totalInches.toFixed(1)+'″':'—';
+  ['lpVal2','lpVal3','lpVal4'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=val});
+  ['lpBar2','lpBar3','lpBar4'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.right=(100-pct)+'%'});
+}
+
+function runAnalysis(){
+  go(5);
+  const steps=[
+    {pct:8,lbl:'Parsing biometric inputs',msg:'inputs_received [10/10]',time:400},
+    {pct:18,lbl:'Hashing session file',msg:'file_id generated',time:350},
+    {pct:30,lbl:'Calculating posture reserve',msg:'postural_deficit detected',time:500},
+    {pct:44,lbl:"Modeling Wolff's Law response",msg:'bone_matrix curve OK',time:550},
+    {pct:58,lbl:'Endocrine ceiling projection',msg:'HGH_max estimated',time:500},
+    {pct:72,lbl:'Genetic midparent gap analysis',msg:'gap_delta computed',time:500},
+    {pct:86,lbl:'Cross-referencing N=847 subjects',msg:'nearest_match found',time:600},
+    {pct:96,lbl:'Generating trajectory',msg:'12-week curve plotted',time:400},
+    {pct:100,lbl:'Projection complete',msg:'READY',time:300,done:true}
+  ];
+  const termW=document.getElementById('termWindow'),fill=document.getElementById('progFill'),pctL=document.getElementById('progPct'),lblL=document.getElementById('progLabel');
+  termW.innerHTML='';
+  let i=0;
+  function next(){
+    if(i>=steps.length){setTimeout(showResult,400);return}
+    const s=steps[i];
+    fill.style.right=(100-s.pct)+'%';
+    pctL.textContent=s.pct+'%';
+    lblL.textContent=s.lbl;
+    const line=document.createElement('div');
+    line.className='tline'+(s.done?' ok':'');
+    const ts=new Date().toLocaleTimeString('en-GB',{hour12:false});
+    line.innerHTML=`<span class="t">[${ts}]</span><span class="a">${s.done?'✓':'▸'}</span><span class="m">${s.lbl} — <b>${s.msg}</b></span>`;
+    termW.appendChild(line);
+    termW.scrollTop=termW.scrollHeight;
+    while(termW.children.length>9)termW.removeChild(termW.firstChild);
+    i++;
+    setTimeout(next,s.time);
+  }
+  next();
+}
+
+function showResult(){
+  go(6);
+  const p=computeProjection();
+  const currentCm=S.height||170;
+  const projCm=currentCm+p.totalCm;
+  document.getElementById('rName').textContent=(S.name||'Subject').toUpperCase();
+  document.getElementById('fileId').textContent='#'+genFileId();
+  document.getElementById('rConf').textContent=(72+Math.round(Math.random()*18))+'%';
+  document.getElementById('rDelta').textContent='+'+p.totalInches.toFixed(1)+'″  / +'+p.totalCm.toFixed(1)+'cm';
+  document.getElementById('rCurH').textContent=cmToFtIn(currentCm)+' · '+currentCm+'cm';
+  document.getElementById('rProjH').textContent=cmToFtIn(projCm)+' · '+projCm.toFixed(0)+'cm';
+
+  const floorCm=Math.max(20,currentCm-20);
+  const rangeCm=Math.max(1,projCm-floorCm);
+  const curPctVis=((currentCm-floorCm)/rangeCm)*100;
+  setTimeout(()=>{
+    document.getElementById('rBarCur').style.height=Math.max(14,curPctVis*0.78)+'%';
+    document.getElementById('rBarProj').style.height=(100*0.78)+'%';
+  },120);
+
+  document.getElementById('mPosture').textContent='+'+p.posture.toFixed(2)+'″';
+  document.getElementById('mBone').textContent='+'+p.bone.toFixed(2)+'″';
+  document.getElementById('mHgh').textContent='+'+p.hgh.toFixed(2)+'″';
+  document.getElementById('mGap').textContent='+'+p.genetic.toFixed(2)+'″';
+
+  const bdList=document.getElementById('bdList');
+  const total=Math.max(0.01,p.posture+p.bone+p.hgh+p.genetic);
+  const rows=[
+    {n:'Postural realignment (CSE + NHM)',v:p.posture,c:''},
+    {n:"Bone remodeling (AIS + Wolff's Law)",v:p.bone,c:'g'},
+    {n:'Endocrine / HGH amplification',v:p.hgh,c:'a'},
+    {n:'Genetic ceiling recovery',v:p.genetic,c:''}
+  ];
+  bdList.innerHTML=rows.map(r=>{
+    const pct=(r.v/total)*100;
+    return `<div class="bd-row"><span class="bd-name">${r.n}</span><div class="bd-meter"><div class="bd-meter-fill ${r.c}" style="right:${100-pct}%"></div></div><span class="bd-pts">+${r.v.toFixed(2)}″</span></div>`;
+  }).join('')+`<div class="bd-row total"><span class="bd-name">Adherence modifier (${Math.round(p.commitFactor*100)}%)</span><div class="bd-meter"><div class="bd-meter-fill ${p.commitFactor>=1?'g':p.commitFactor>=.8?'a':''}" style="right:${100-Math.min(100,p.commitFactor*80)}%"></div></div><span class="bd-pts">×${p.commitFactor.toFixed(2)}</span></div>`;
+
+  drawChart(p.weeklyCm,currentCm);
+}
+
+function drawChart(weekly,baseline){
+  const svg=document.getElementById('chartSvg');
+  const W=400,H=220,PL=10,PR=10,PT=18,PB=22;
+  const maxCm=Math.max(...weekly)||1;
+  const pts=weekly.map((cm,i)=>{
+    const x=PL+(W-PL-PR)*(i/12);
+    const y=H-PB-(H-PT-PB)*(cm/Math.max(1,maxCm*1.1));
+    return[x,y];
+  });
+  const path=pts.map((p,i)=>(i===0?'M':'L')+p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
+  const areaPath=path+` L ${pts[pts.length-1][0]},${H-PB} L ${pts[0][0]},${H-PB} Z`;
+  const baseY=H-PB;
+  const x4=PL+(W-PL-PR)*(4/12),x8=PL+(W-PL-PR)*(8/12);
+  let grid='';
+  for(let g=1;g<=4;g++){
+    const y=H-PB-((H-PT-PB)*(g/5));
+    grid+=`<line x1="${PL}" y1="${y}" x2="${W-PR}" y2="${y}" stroke="#dad7cd" stroke-dasharray="2 3"/>`;
+  }
+  let wkL='';
+  [0,4,8,12].forEach(w=>{
+    const x=PL+(W-PL-PR)*(w/12);
+    wkL+=`<text x="${x}" y="${H-6}" text-anchor="middle" fill="#5b5b60" font-size="9" font-family="JetBrains Mono" font-weight="700" letter-spacing="0.5">W${w.toString().padStart(2,'0')}</text>`;
+  });
+  const phaseColors=['#e0431a','#0a0a0a','#1f5740'];
+  let dots='';
+  pts.forEach((p,i)=>{
+    const phase=i<=4?0:i<=8?1:2;
+    dots+=`<circle cx="${p[0]}" cy="${p[1]}" r="${i===12?5:2.5}" fill="${phaseColors[phase]}" stroke="#fff" stroke-width="${i===12?2:1}"/>`;
+  });
+  const last=pts[pts.length-1];
+  const finalLbl=`<g transform="translate(${last[0]-56},${last[1]-26})"><rect x="0" y="0" width="54" height="20" fill="#0a0a0a"/><text x="27" y="14" text-anchor="middle" fill="#e0431a" font-family="Archivo Black" font-size="10">+${weekly[12].toFixed(1)} CM</text></g>`;
+  svg.innerHTML=`${grid}
+    <line x1="${x4}" y1="${PT}" x2="${x4}" y2="${H-PB}" stroke="#9b9b9f" stroke-dasharray="2 3" stroke-width="0.6"/>
+    <line x1="${x8}" y1="${PT}" x2="${x8}" y2="${H-PB}" stroke="#9b9b9f" stroke-dasharray="2 3" stroke-width="0.6"/>
+    <line x1="${PL}" y1="${baseY}" x2="${W-PR}" y2="${baseY}" stroke="#0a0a0a" stroke-width="1"/>
+    <path d="${areaPath}" fill="url(#cg)" opacity="0.5"/>
+    <path d="${path}" fill="none" stroke="#e0431a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    ${dots}${wkL}
+    <text x="${PL+4}" y="${baseY-4}" fill="#5b5b60" font-size="8" font-family="JetBrains Mono" font-weight="700" letter-spacing="0.5">BASELINE ${baseline}CM</text>
+    ${finalLbl}
+    <defs><linearGradient id="cg" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#e0431a" stop-opacity="0.3"/><stop offset="100%" stop-color="#e0431a" stop-opacity="0"/></linearGradient></defs>`;
+  const pathEl=svg.querySelector('path[stroke="#e0431a"]');
+  if(pathEl){
+    const len=pathEl.getTotalLength?pathEl.getTotalLength():600;
+    pathEl.style.strokeDasharray=len;pathEl.style.strokeDashoffset=len;
+    pathEl.style.transition='stroke-dashoffset 1.6s cubic-bezier(.22,.9,.28,1)';
+    requestAnimationFrame(()=>{pathEl.style.strokeDashoffset=0});
+  }
+}
+
+function cmToFtIn(cm){const ti=cm/2.54;const ft=Math.floor(ti/12);const i=Math.round(ti-ft*12);return`${ft}'${i}"`}
+function genFileId(){const c='abcdefghjkmnpqrstvwxyz23456789';let r='';for(let i=0;i<8;i++)r+=c[Math.floor(Math.random()*c.length)];return r}
+function reset(){Object.assign(S,{step:1,name:'',email:'',age:0,height:0,weight:0,sex:'',posture:5,dad:0,mom:0,plate:'',activity:'',sleep:7,commit:80});['f_name','f_email','f_age','f_height','f_weight','f_dad','f_mom'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});document.getElementById('f_sex').value='';document.getElementById('f_posture').value=5;document.getElementById('postureVal').innerHTML='5<span class="serif">/10</span>';document.getElementById('f_sleep').value=70;document.getElementById('sleepVal').innerHTML='7.0<span class="serif">hrs</span>';document.querySelectorAll('.tile.on').forEach(t=>t.classList.remove('on'));document.querySelector('#t_commit .tile[data-val="80"]').classList.add('on');go(1)}
+</script>
+</body>
+</html>

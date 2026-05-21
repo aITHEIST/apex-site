@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Press — APEX</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="subpage.css">
+</head>
+<body><style>
+.press-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+@media(max-width:780px){.press-grid{grid-template-columns:1fr}}
+.press-card{background:var(--paper);border:1px solid var(--ink);padding:30px 32px;position:relative;transition:transform .15s,box-shadow .15s}
+.press-card:hover{transform:translate(-3px,-3px);box-shadow:6px 6px 0 var(--ink)}
+.press-card .pub{font-family:var(--display);font-size:22px;letter-spacing:-.015em;line-height:1}
+.press-card .date{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--mid);text-transform:uppercase;margin-top:8px}
+.press-card h3{font-family:var(--serif);font-style:italic;font-weight:400;font-size:24px;line-height:1.25;letter-spacing:-.01em;color:var(--ink);margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+.press-card .q{margin-top:14px;font-size:14.5px;color:var(--mid);font-weight:500}
+.press-card .q::before{content:'"';color:var(--hot)}.press-card .q::after{content:'"';color:var(--hot)}
+.press-kit{background:var(--ink);color:var(--bg);padding:48px;display:grid;grid-template-columns:1fr auto;gap:32px;align-items:center;margin-top:48px;position:relative}
+.press-kit::before{content:'PRESS KIT';position:absolute;top:-12px;left:24px;background:var(--hot);color:var(--paper);padding:4px 10px;font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.14em}
+.press-kit h3{font-family:var(--display);font-size:36px;letter-spacing:-.02em;line-height:1.1}
+.press-kit p{color:#c8c8c8;margin-top:8px;font-size:15px;max-width:48ch;font-weight:500}
+.press-dl{background:var(--hot);color:var(--ink);padding:18px 24px;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--paper);transition:transform .15s,background .15s;cursor:pointer}
+.press-dl:hover{background:var(--yellow);transform:translateY(-2px)}
+@media(max-width:780px){.press-kit{grid-template-columns:1fr}}
+@media(max-width:640px){
+  .press-grid{gap:16px}
+  .press-card{padding:22px 22px}
+  .press-card .pub{font-size:18px}
+  .press-card .date{font-size:10px;letter-spacing:.1em}
+  .press-card h3{font-size:19px;margin-top:14px;padding-top:14px}
+  .press-card .q{font-size:13.5px;margin-top:10px}
+  .press-kit{padding:28px 22px;gap:18px;margin-top:32px}
+  .press-kit h3{font-size:26px}
+  .press-kit p{font-size:14px}
+  .press-dl{padding:14px 18px;font-size:11px;letter-spacing:.1em;text-align:center}
+}
+</style>
+<nav class="nav">
+  <div class="nav-i">
+    <a class="brand" href="index.html"><span class="sq"></span>APEX</a>
+    <div class="nav-ul">
+      <a href="Protocol.html" >Protocol</a>
+      <a href="Science.html" >Science</a>
+      <a href="Research.html" >Research</a>
+      <a href="Press.html" class="cur">Press</a>
+      <a href="Contact.html" >Contact</a>
+    </div>
+    <a class="nav-cta" href="Height Assessment.html">Run assessment <span class="arr">↗</span></a>
+  </div>
+</nav>
+<section class="page-head">
+  <div class="wrap">
+    <div class="page-meta">
+      <div class="crumbs"><a href="index.html">Home</a><span class="stamp">Press</span></div>
+      <div class="ver">Selected coverage · 2025–2026</div>
+      <div>DOC · PR-2026</div>
+    </div>
+    <div class="page-grid">
+      <div class="page-kick"><span class="idx">V.</span>Press</div>
+      <div>
+        <h1 class="page-h1">What people <span class="serif">wrote</span> when they actually read it.</h1>
+        <p class="page-lede">We don't pitch coverage. We publish methodology. Sometimes journalists notice. <strong>Below is what they wrote</strong> — selected coverage with our worst quotes included on purpose.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec paper">
+  <div class="wrap">
+    <div class="press-grid">
+      <div class="press-card">
+        <div class="pub">The Athletic</div>
+        <div class="date">Mar 2026</div>
+        <h3>How a sleep protocol added 2 inches to 847 people</h3>
+        <div class="q">Counterintuitive but rigorous — the protocol leans on circadian endocrinology, not pseudoscience.</div>
+      </div><div class="press-card">
+        <div class="pub">Wired</div>
+        <div class="date">Feb 2026</div>
+        <h3>The "height-as-output" startup that won't shut up about its R²</h3>
+        <div class="q">APEX is the first consumer protocol in this category to publish a model card.</div>
+      </div><div class="press-card">
+        <div class="pub">The Guardian</div>
+        <div class="date">Jan 2026</div>
+        <h3>Inside the cohort of 847</h3>
+        <div class="q">They sent me their raw dataset within 72 hours. That alone separates them from the field.</div>
+      </div><div class="press-card">
+        <div class="pub">Hacker News</div>
+        <div class="date">Dec 2025</div>
+        <h3>Show HN: APEX height protocol with published model (n=847)</h3>
+        <div class="q">Front page · 1,200 comments · the methodology section drew most of the heat — and survived it.</div>
+      </div><div class="press-card">
+        <div class="pub">Men's Health UK</div>
+        <div class="date">Nov 2025</div>
+        <h3>The new posture-first height protocol</h3>
+        <div class="q">I dropped my desk-induced 1.4″ in five weeks. That part is real.</div>
+      </div><div class="press-card">
+        <div class="pub">r/decompression</div>
+        <div class="date">Oct 2025</div>
+        <h3>AMA thread with APEX research lead</h3>
+        <div class="q">Most upvoted: "they actually answer the hard questions."</div>
+      </div>
+    </div>
+
+    <div class="press-kit">
+      <div>
+        <h3>Need a <span class="serif" style="color:var(--hot);font-family:Instrument Serif;font-style:italic">press kit?</span></h3>
+        <p>Logo set, founder bios, methodology PDF, anonymized dataset extract, cohort stats. ZIP package, no email gate.</p>
+      </div>
+      <a class="press-dl" href="Contact.html">Request press kit →</a>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="wrap">
+    <h2>Read what we sent <span class="serif">journalists.</span></h2>
+    <p>Same data goes to subjects, journalists, and skeptics. Run the assessment to see your own number first.</p>
+    <a class="btn-primary" href="Height Assessment.html">Run my assessment <span class="arr">→</span></a>
+  </div>
+</section>
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-i">
+      <div class="brand"><span class="sq"></span>APEX</div>
+      <div class="footer-links">
+        <a href="Protocol.html">Protocol</a>
+        <a href="Science.html">Science</a>
+        <a href="Research.html">Research</a>
+        <a href="Press.html">Press</a>
+        <a href="Contact.html">Contact</a>
+        <a href="Privacy.html">Privacy</a>
+        <a href="Terms.html">Terms</a>
+        <a href="Refunds.html">Refunds</a>
+      </div>
+      <div style="text-align:right">v12.4 · 2026 · N=847</div>
+    </div>
+    <p class="footer-legal">APEX is a research-driven performance protocol, not a medical treatment. Projections are statistical estimates based on longitudinal cohort data (n=847) and are not guarantees. Individual outcomes vary with age, genetics, and adherence. Consult a physician before beginning any new physical protocol if you have pre-existing medical conditions.</p>
+  </div>
+</footer>
+</body>
+</html>
